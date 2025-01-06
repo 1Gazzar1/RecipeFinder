@@ -9,7 +9,7 @@
 		[BsonElement("Name")]
 		public string? Name { get; set; }
 		[BsonElement("Calories")]
-		public string? Calories { get; set; }
+		public double Calories { get; set; }
 		[BsonElement("Servings")]
 		public int Servings { get; set; }
 		[BsonElement("Cookingtime")]

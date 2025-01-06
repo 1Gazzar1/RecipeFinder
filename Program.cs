@@ -10,6 +10,7 @@ namespace RecipeFinder
 			builder.Services.Configure<MongoDBSettings>(
 				builder.Configuration.GetSection("MongoDB"));
 			builder.Services.AddSingleton<AppDBContext>();
+			builder.Services.AddSingleton<IRecipeService,RecipeService>();
 
 			builder.Services.AddControllers();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
