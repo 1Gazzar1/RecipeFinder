@@ -1,27 +1,22 @@
-using Microsoft.AspNetCore.Mvc;
-using RecipeFinder.Models;
-
 namespace RecipeFinder.Controllers
 {
-	[ApiController]
-	[Route("api/[controller]")]
-	public class RecipeController : ControllerBase
-	{
-		private static List<Recipe> recipes = new List<Recipe>();
-		public RecipeController()
+    [ApiController]
+    [Route("api/[controller]")]
+    public class RecipeController : ControllerBase
+    {
+        private readonly AppDBContext _db;
+        public RecipeController(AppDBContext db)
         {
-			
-		}
-		[HttpGet]
-		public IActionResult getallrecipe()
-		{	
-			return Ok(recipes);
-		}
-		[HttpPost]
-		public IActionResult addrecipe(Recipe recipe)
-		{
-			recipes.Add(recipe);
-			return Ok("good job");
-		}
+            _db = db;
+        }
+        [HttpGet]
+        public IActionResult GetAllRecipe()
+        {
+
+
+            var recipes = _db.Recipes.Find(_ => true).ToList();
+            return Ok(recipes);
+        }
+
     }
 }

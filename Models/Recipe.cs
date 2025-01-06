@@ -2,12 +2,19 @@
 {
 	public class Recipe
 	{
-		public int object_id { get; set; }
-        public int Id { get; set; }
-        public string? Name { get; set; }
-        public double Calories { get; set; }
-        public int Servings { get; set; }
-        public int Cookingtime { get; set; }
-        public List<Ingredient?>? Ingredients { get; set; }
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+		[BsonElement("_id")]
+		public ObjectId Id { get; set; }
+		[BsonElement("Name")]
+		public string? Name { get; set; }
+		[BsonElement("Calories")]
+		public string? Calories { get; set; }
+		[BsonElement("Servings")]
+		public int Servings { get; set; }
+		[BsonElement("Cookingtime")]
+		public int Cookingtime { get; set; }
+		[BsonElement("Ingredients")]
+		public List<Ingredient?>? Ingredients { get; set; }
     }
 }
