@@ -6,3 +6,4 @@ global using Microsoft.Extensions.Options;
 global using MongoDB.Driver;
 global using RecipeFinder.Interfaces;
 global using RecipeFinder.Services;
+global using RecipeFinder.DTOs;

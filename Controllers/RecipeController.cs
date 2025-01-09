@@ -59,5 +59,15 @@ namespace RecipeFinder.Controllers
 			await _recipeService.DeleteRecipe(objectId);
 			return NoContent();
 		}
+		[HttpPost("Filter")]
+		public async Task<IActionResult> FilterRecipes(RecipeDTO recipeDetails )
+		{
+			var recipes = await _recipeService.Filter(recipeDetails.Name,
+										recipeDetails.Ingredients,
+										recipeDetails.Category,
+										recipeDetails.Calories,
+										recipeDetails.Cookingtime);
+			return Ok(recipes);
+		}
 	}
 }

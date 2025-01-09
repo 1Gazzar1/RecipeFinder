@@ -1,4 +1,6 @@
-﻿namespace RecipeFinder.Services
+﻿using MongoDB.Driver.Linq;
+
+namespace RecipeFinder.Services
 {
     public class RecipeService : IRecipeService
     {
@@ -35,6 +37,25 @@
         {
             await _db.Recipes.DeleteOneAsync(r => r.Id == Id);
         }
+        public async Task<List<Recipe>> Filter(string name, List<string> ingredients, string category, double calories, int cooking_time)
+        {
+            cooking_time = cooking_time == 0 ?  int.MaxValue : cooking_time;
+            calories = calories == 0 ?  double.MaxValue : calories ;
+            
 
+			var builder = Builders<Recipe>.Filter;
+
+            var filter =
+                            builder.Regex(r => r.Name, new BsonRegularExpression(name, "i")) &
+                            builder.Lte(r => r.Calories, calories) &
+                            builder.Lte(r => r.Cookingtime, cooking_time) &
+                            builder.Regex(r => r.Category, new BsonRegularExpression(category, "i"));
+            if (ingredients.Count > 0)
+            {
+				filter = filter & (builder.ElemMatch(r => r.Ingredients, i => ingredients.Contains(i.Name)));
+			}          
+                                            
+            return await _db.Recipes.Find(filter).ToListAsync();
+        }
     }
 }
