@@ -1,4 +1,6 @@
-﻿namespace RecipeFinder.Interfaces
+﻿using MongoDB.Driver.Linq;
+
+namespace RecipeFinder.Interfaces
 {
 	public interface IRecipeService
 	{
@@ -7,6 +9,8 @@
 		Task AddRecipe(Recipe recipe);
 		Task UpdateRecipe(ObjectId Id, Recipe recipe);
 		Task DeleteRecipe(ObjectId Id);
-		Task<List<Recipe>> Filter(string Name, List<string> ingredients, string category, double calories, int cooking_time);
+		Task<List<Recipe>> Filter(string name, List<string> ingredients,
+			string category, double calories, int cooking_time,
+			RecipeSortingOptions sortBy = RecipeSortingOptions.Name, bool asc = true);
 	}
 }

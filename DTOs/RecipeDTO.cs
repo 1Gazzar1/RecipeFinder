@@ -7,5 +7,7 @@
 		public int Cookingtime { get; set; }
 		public string? Category { get; set; }
 		public List<string>? Ingredients { get; set; }
-	}
+        public RecipeSortingOptions SortBy { get; set; }
+        public bool Asc { get; set; }
+    }
 }

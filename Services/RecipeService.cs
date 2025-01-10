@@ -37,25 +37,53 @@ namespace RecipeFinder.Services
         {
             await _db.Recipes.DeleteOneAsync(r => r.Id == Id);
         }
-        public async Task<List<Recipe>> Filter(string name, List<string> ingredients, string category, double calories, int cooking_time)
+        public async Task<List<Recipe>> Filter(string name, List<string> ingredients,
+            string category, double calories, int cooking_time ,
+            RecipeSortingOptions sortBy = RecipeSortingOptions.Name, bool asc = true )
         {
             cooking_time = cooking_time == 0 ?  int.MaxValue : cooking_time;
             calories = calories == 0 ?  double.MaxValue : calories ;
             
-
-			var builder = Builders<Recipe>.Filter;
-
+            // Filter
+			var filter_builder = Builders<Recipe>.Filter;
+            
             var filter =
-                            builder.Regex(r => r.Name, new BsonRegularExpression(name, "i")) &
-                            builder.Lte(r => r.Calories, calories) &
-                            builder.Lte(r => r.Cookingtime, cooking_time) &
-                            builder.Regex(r => r.Category, new BsonRegularExpression(category, "i"));
+                            filter_builder.Regex(r => r.Name, new BsonRegularExpression(name, "i")) &
+                            filter_builder.Lte(r => r.Calories, calories) &
+                            filter_builder.Lte(r => r.Cookingtime, cooking_time) &
+                            filter_builder.Regex(r => r.Category, new BsonRegularExpression(category, "i"));
+            // if there is no ingredients input ignore filtering the ingredients
             if (ingredients.Count > 0)
             {
-				filter = filter & (builder.ElemMatch(r => r.Ingredients, i => ingredients.Contains(i.Name)));
-			}          
-                                            
-            return await _db.Recipes.Find(filter).ToListAsync();
+				filter = filter & (filter_builder.ElemMatch(r => r.Ingredients, i => ingredients.Contains(i.Name)));
+			}
+
+            //Sort
+            SortDefinition<Recipe>? sort;
+            var sort_builder = Builders<Recipe>.Sort;
+            
+            if (sortBy == RecipeSortingOptions.Calories)
+            {
+                sort = asc == true ? sort_builder.Ascending(r => r.Calories) : sort_builder.Descending(r => r.Calories);
+            }
+            else if (sortBy == RecipeSortingOptions.Cookingtime)
+            {
+                sort = asc == true ? sort_builder.Ascending(r => r.Cookingtime) : sort_builder.Descending(r => r.Cookingtime);
+            }
+            else if (sortBy == RecipeSortingOptions.IngredientsCount)
+            {
+                var recipes =  await _db.Recipes.Find(filter).ToListAsync();
+                return asc == true ? recipes.OrderBy(r => r.Ingredients.Count).ToList() :
+                                    recipes.OrderByDescending(r => r.Ingredients.Count).ToList();
+                                       
+            }
+            // sort by name if nothing else or wrong input (somehow)
+            else
+            {
+				sort = asc == true ? sort_builder.Ascending(r => r.Name) : sort_builder.Descending(r => r.Name);
+			}
+
+			return await _db.Recipes.Find(filter).Sort(sort).ToListAsync();
         }
-    }
+	}
 }

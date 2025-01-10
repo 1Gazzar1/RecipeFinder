@@ -1,5 +1,13 @@
 ﻿namespace RecipeFinder.Models
-{
+{	
+	public enum RecipeSortingOptions
+	{	
+		Name,
+		Calories,
+		Cookingtime,
+		IngredientsCount
+	
+	}
 	public class Recipe
 	{
         [BsonId]
@@ -30,5 +38,5 @@
 
 		[BsonElement("Ingredients")]
 		public List<Ingredient?>? Ingredients { get; set; }
-    }
+	}
 }
